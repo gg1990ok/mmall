@@ -5,6 +5,7 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
 import com.mmall.pojo.User;
+import com.mmall.service.IProductService;
 import com.mmall.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,9 @@ public class ProductManageController {
 
     @Autowired
     private IUserService iUserService;
+
+    @Autowired
+    private IProductService iProductService;
 
     public ServerResponse productSave(HttpSession session, Product product) {
         User user = (User)session.getAttribute(Const.CURRENT_USER);
