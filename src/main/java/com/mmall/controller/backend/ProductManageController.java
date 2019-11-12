@@ -114,12 +114,12 @@ public class ProductManageController {
 
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse<Map> upload(MultipartFile file, HttpServletRequest request) {
+    public ServerResponse<Map<String, String>> upload(MultipartFile file, HttpServletRequest request) {
         String path = request.getSession().getServletContext().getRealPath("upload");
         String targetFileName = iFileService.upload(file, path);
         String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
 
-        Map fileMap = Maps.newHashMap();
+        Map<String, String> fileMap = Maps.newHashMap();
         fileMap.put("uri", targetFileName);
         fileMap.put("url", url);
         return ServerResponse.createBySuccess(fileMap);
