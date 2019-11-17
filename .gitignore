@@ -36,3 +36,4 @@ target/
 Thumbs.db
 
 datasource.properties
+mmall.properties

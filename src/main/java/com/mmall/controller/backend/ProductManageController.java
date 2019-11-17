@@ -114,14 +114,25 @@ public class ProductManageController {
 
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse<Map<String, String>> upload(MultipartFile file, HttpServletRequest request) {
-        String path = request.getSession().getServletContext().getRealPath("upload");
-        String targetFileName = iFileService.upload(file, path);
-        String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
+    public ServerResponse<Map<String, String>> upload(HttpSession session,
+                                                      @RequestParam(value = "upload_file", required = false) MultipartFile file,
+                                                      HttpServletRequest request) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),
+                    "用户未登陆，请登陆管理员。");
+        }
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            String targetFileName = iFileService.upload(file, path);
+            String url = PropertiesUtil.getProperty("ftp.server.http.prefix")+targetFileName;
 
-        Map<String, String> fileMap = Maps.newHashMap();
-        fileMap.put("uri", targetFileName);
-        fileMap.put("url", url);
-        return ServerResponse.createBySuccess(fileMap);
+            Map<String, String> fileMap = Maps.newHashMap();
+            fileMap.put("uri", targetFileName);
+            fileMap.put("url", url);
+            return ServerResponse.createBySuccess(fileMap);
+        } else {
+            return ServerResponse.createByErrorMessage("无操作权限");
+        }
     }
 }
